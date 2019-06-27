@@ -18,9 +18,8 @@ int main ()
        ev.events = EPOLLIN; // | EPOLLOUT;
        std::cout << " fd : " << ev.data.fd << std::endl;
        const auto epfd = epoll_create(1);
-       const auto res = epoll_ctl(epfd, EPOLL_CTL_ADD, ev.data.fd, &ev);
+       epoll_ctl(epfd, EPOLL_CTL_ADD, ev.data.fd, &ev);
        struct epoll_event event[1];
-       int sent = 0;
  
        while(1)
        {

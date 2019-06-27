@@ -1,0 +1,8 @@
+Date=`date '+%Y-%m-%d %H:%m:%s'`
+echo "Example service started at ${Date}" | systemd-cet -p info
+
+while :
+do
+echo "Looping...";
+sleep 30;
+done
