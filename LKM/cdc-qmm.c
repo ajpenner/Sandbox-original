@@ -44,8 +44,8 @@
 #define DRIVER_AUTHOR "Armin Fuerst, Pavel Machek, Johannes Erdfelt, Vojtech Pavlik, David Kubicek, Johan Hovold"
 #define DRIVER_DESC "USB Abstract Control Model driver for USB modems and ISDN adapters"
 
-static struct usb_driver acm_driver;
-static struct tty_driver *acm_tty_driver;
+static struct usb_driver qmm_driver;
+static struct tty_driver *qmm_tty_driver;
 
 static DEFINE_IDR(acm_minors);
 static DEFINE_MUTEX(acm_minors_lock);
@@ -1488,10 +1488,10 @@ skip_countries:
 	acm->line.bDataBits = 8;
 	acm_set_line(acm, &acm->line);
 
-	usb_driver_claim_interface(&acm_driver, data_interface, acm);
+	usb_driver_claim_interface(&qmm_driver, data_interface, acm);
 	usb_set_intfdata(data_interface, acm);
 
-	tty_dev = tty_port_register_device(&acm->port, acm_tty_driver, minor,
+	tty_dev = tty_port_register_device(&acm->port, qmm_tty_driver, minor,
 			&control_interface->dev);
 	if (IS_ERR(tty_dev)) {
 		rv = PTR_ERR(tty_dev);
@@ -1567,7 +1567,7 @@ static void acm_disconnect(struct usb_interface *intf)
 	acm_kill_urbs(acm);
 	cancel_work_sync(&acm->work);
 
-	tty_unregister_device(acm_tty_driver, acm->minor);
+	tty_unregister_device(qmm_tty_driver, acm->minor);
 
 	usb_free_urb(acm->ctrlurb);
 	for (i = 0; i < ACM_NW; i++)
@@ -1581,7 +1581,7 @@ static void acm_disconnect(struct usb_interface *intf)
 	kfree(acm->notification_buffer);
 
 	if (!acm->combined_interfaces)
-		usb_driver_release_interface(&acm_driver, intf == acm->control ?
+		usb_driver_release_interface(&qmm_driver, intf == acm->control ?
 					acm->data : acm->control);
 
 	tty_port_put(&acm->port);
@@ -1946,8 +1946,8 @@ static const struct usb_device_id acm_ids[] = {
 
 MODULE_DEVICE_TABLE(usb, acm_ids);
 
-static struct usb_driver acm_driver = {
-	.name =		"cdc_acm",
+static struct usb_driver qmm_driver = {
+	.name =		"cdc_qmm",
 	.probe =	acm_probe,
 	.disconnect =	acm_disconnect,
 #ifdef CONFIG_PM
@@ -1993,30 +1993,30 @@ static const struct tty_operations acm_ops = {
 static int __init acm_init(void)
 {
 	int retval;
-	acm_tty_driver = alloc_tty_driver(ACM_TTY_MINORS);
-	if (!acm_tty_driver)
+	qmm_tty_driver = alloc_tty_driver(ACM_TTY_MINORS);
+	if (!qmm_tty_driver)
 		return -ENOMEM;
-	acm_tty_driver->driver_name = "qmm",
-	acm_tty_driver->name = "ttyQMM",
-	acm_tty_driver->major = ACM_TTY_MAJOR,
-	acm_tty_driver->minor_start = 0,
-	acm_tty_driver->type = TTY_DRIVER_TYPE_SERIAL,
-	acm_tty_driver->subtype = SERIAL_TYPE_NORMAL,
-	acm_tty_driver->flags = TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV;
-	acm_tty_driver->init_termios = tty_std_termios;
-	acm_tty_driver->init_termios.c_cflag = B9600 | CS8 | CREAD | HUPCL | CLOCAL; // we can set this to B11200 or so
-	tty_set_operations(acm_tty_driver, &acm_ops);
+	qmm_tty_driver->driver_name = "qmm",
+	qmm_tty_driver->name = "ttyQMM",
+	qmm_tty_driver->major = ACM_TTY_MAJOR,
+	qmm_tty_driver->minor_start = 0,
+	qmm_tty_driver->type = TTY_DRIVER_TYPE_SERIAL,
+	qmm_tty_driver->subtype = SERIAL_TYPE_NORMAL,
+	qmm_tty_driver->flags = TTY_DRIVER_REAL_RAW | TTY_DRIVER_DYNAMIC_DEV;
+	qmm_tty_driver->init_termios = tty_std_termios;
+	qmm_tty_driver->init_termios.c_cflag = B9600 | CS8 | CREAD | HUPCL | CLOCAL; // we can set this to B11200 or so
+	tty_set_operations(qmm_tty_driver, &acm_ops);
 
-	retval = tty_register_driver(acm_tty_driver);
+	retval = tty_register_driver(qmm_tty_driver);
 	if (retval) {
-		put_tty_driver(acm_tty_driver);
+		put_tty_driver(qmm_tty_driver);
 		return retval;
 	}
 
-	retval = usb_register(&acm_driver);
+	retval = usb_register(&qmm_driver);
 	if (retval) {
-		tty_unregister_driver(acm_tty_driver);
-		put_tty_driver(acm_tty_driver);
+		tty_unregister_driver(qmm_tty_driver);
+		put_tty_driver(qmm_tty_driver);
 		return retval;
 	}
 
@@ -2027,9 +2027,9 @@ static int __init acm_init(void)
 
 static void __exit acm_exit(void)
 {
-	usb_deregister(&acm_driver);
-	tty_unregister_driver(acm_tty_driver);
-	put_tty_driver(acm_tty_driver);
+	usb_deregister(&qmm_driver);
+	tty_unregister_driver(qmm_tty_driver);
+	put_tty_driver(qmm_tty_driver);
 	idr_destroy(&acm_minors);
 }
 
