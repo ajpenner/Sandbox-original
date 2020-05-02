@@ -1145,7 +1145,7 @@ static int acm_write_buffers_alloc(struct acm *acm)
 	return 0;
 }
 
-static int acm_probe(struct usb_interface *intf,
+static int qmm_probe(struct usb_interface *intf,
 		     const struct usb_device_id *id)
 {
 	struct usb_cdc_union_desc *union_header = NULL;
@@ -1534,7 +1534,7 @@ alloc_fail:
 	return rv;
 }
 
-static void acm_disconnect(struct usb_interface *intf)
+static void qmm_disconnect(struct usb_interface *intf)
 {
 	struct acm *acm = usb_get_intfdata(intf);
 	struct tty_struct *tty;
@@ -1685,7 +1685,7 @@ static int acm_pre_reset(struct usb_interface *intf)
  * USB driver structure.
  */
 
-static const struct usb_device_id acm_ids[] = {
+static const struct usb_device_id qmm_ids[] = {
 
 	{ USB_DEVICE(0x1fc9, 0x0003), // Domino RFID Reader
 	.driver_info = DISABLE_ECHO, // DISABLE ECHO in termios flag 
@@ -1731,19 +1731,19 @@ static const struct usb_device_id acm_ids[] = {
 	{ } // Always need a NULL set at the end
 };
 
-MODULE_DEVICE_TABLE(usb, acm_ids);
+MODULE_DEVICE_TABLE(usb, qmm_ids);
 
 static struct usb_driver qmm_driver = {
 	.name =		"cdc_qmm",
-	.probe =	acm_probe,
-	.disconnect =	acm_disconnect,
+	.probe =	qmm_probe,
+	.disconnect =	qmm_disconnect,
 #ifdef CONFIG_PM
 	.suspend =	acm_suspend,
 	.resume =	acm_resume,
 	.reset_resume =	acm_reset_resume,
 #endif
 	.pre_reset =	acm_pre_reset,
-	.id_table =	acm_ids,
+	.id_table =	qmm_ids,
 #ifdef CONFIG_PM
 	.supports_autosuspend = 1,
 #endif
