@@ -1,0 +1,17 @@
+#! /bin/sh
+
+g++ -Wall -g -c -o main.o main.cpp
+g++ -Wall -g -c -o power_slow.o power_slow.cpp
+g++ -Wall -g -c -o power.o power.cpp
+
+g++ main.o power_slow.o power.o -o fast
+g++ main.o power_slow.o         -o slow
+
+
+g++ -Wall -g -c -o main_simple.o main_simple.cpp
+g++ -Wall -g -c -o simple_weak.o simple_weak.cpp
+g++ -Wall -g -c -o simple_strong.o simple_strong.cpp
+gcc -Wall -g -c -o simple_strong_c.o simple_strong.c
+
+g++ main_simple.o simple_weak.o simple_strong_c.o -o strong
+g++ main_simple.o simple_weak.o                 -o weak
