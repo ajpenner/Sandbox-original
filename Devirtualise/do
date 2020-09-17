@@ -1,0 +1,14 @@
+g++ -S methods.cpp
+wc methods.s
+g++ -S -O3 methods.cpp
+wc methods.s
+
+g++ -S final_method.cpp
+wc final_method.s
+g++ -S -O3 final_method.cpp
+wc final_method.s
+
+g++ -S final_class.cpp
+wc final_class.s
+g++ -S -O3 final_class.cpp
+wc final_class.s
