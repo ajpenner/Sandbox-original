@@ -1,0 +1,13 @@
+# Build executable
+gcc -Wall -pg test_gprof.c test_gprof_new.c -o test_gprof
+
+# Run executable, this generates gmon.out
+# Without this step you get "gmon.out: No such file or directory"
+./test_gprof
+
+# Create the human readable output
+gprof test_gprof gmon.out > analysis.txt
+
+# Generate a graphic
+gprof test_gprof | gprof2dot | dot -Tpng -o output.png
+gprof test_gprof | gprof2dot | dot -Tsvg -o output.svg
