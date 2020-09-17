@@ -1,10 +1,9 @@
 #include <iostream>
 
-//Simple::Simple(){}
-//Simple::~Simple(){}
+extern Simple::Simple(){}
+extern Simple::~Simple(){}
 
-//void Simple::Function()
-void _ZN6Simple8FunctionEv()
+extern void Simple::Function()
 {
     std::cout << "I am strong" << std::endl;
 }
