@@ -1,0 +1,7 @@
+#!/bin/sh
+
+g++ -o example  main.cpp
+./example
+
+g++ -o example2 main.cpp override.cpp
+./example2
