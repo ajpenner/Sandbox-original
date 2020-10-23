@@ -1,0 +1,2 @@
+ g++ doer.cpp thinker.cpp main.cpp -o example
+ ./example
