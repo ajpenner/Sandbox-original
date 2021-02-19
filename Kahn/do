@@ -1,0 +1,2 @@
+g++ main.cpp kahn.cpp -o kahn
+./kahn

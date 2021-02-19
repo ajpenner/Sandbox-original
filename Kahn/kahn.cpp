@@ -3,50 +3,100 @@
 #include "kahn.hpp"
 #include <vector>
 #include <queue>
-#include <iostream>
+#include <algorithm>
+#include <set>
+#include <cstdint>
+#include <cassert>
 
 Graph::Graph(int V) 
     : m_V{V}
 { 
-    m_adjacents.resize(m_V);
 } 
 
-void Graph::addEdge(int u, int v) 
-{ 
+void Graph::addTerminal(int u)
+{
+    m_terminal.push_back(u);
+}
+/*
+void Graph::addEdges(const std::vector<std::pair<int, int>>& idList)
+{
+    for(const auto& valuePair : idList)
+    {
+        addEdge(valuePair.first, valuePair.second);
+    }
+}
+*/
+void Graph::addEdge(int u, int v)
+{
     // find the uth vector and push in v
-	m_adjacents[u].push_back(v); 
-} 
+    auto it = std::find_if(m_adjacents.begin(), m_adjacents.end(),
+            [u](const auto& value)
+            {
+              return (u == value.first);
+            });
+    if(it != m_adjacents.end())
+    {
+        it->second.push_back(v);
+    }
+    else
+    {
+        m_adjacents.push_back(std::make_pair(u, std::vector<int>{v}));
+    }
+}
+
+void injectData(std::vector<std::pair<int, uint32_t>>& in_degree, int id)
+{
+    auto degreeIt = std::find_if(in_degree.begin(), in_degree.end(), 
+        [id](const auto& valuePair)
+        {
+            return (id == valuePair.first);
+        });
+        if(degreeIt == in_degree.end())
+        {
+            in_degree.push_back(std::make_pair(id, 0));
+        }
+}
 
 // The function to do Topological Sort. 
 std::vector<int> Graph::topologicalSort() 
 { 
-	// Create a vector to store indegrees of all 
-	// vertices. Initialize all indegrees as 0. 
-    std::vector<uint32_t> in_degree(m_V, 0); 
+	// Create a vector to store indegrees of all vertices. Initialize all indegrees as 0. 
+    std::vector<std::pair<int, uint32_t>> in_degree; 
 
-	// Traverse adjacency lists to fill indegrees of 
-	// vertices. This step takes O(V+E) time 
-	for (int u = 0; u < m_V; u++) 
+	// Traverse adjacency lists to fill indegrees of vertices. 
+	for (const auto& adjacent : m_adjacents) 
     {
-		for (auto itr = m_adjacents[u].cbegin(); itr != m_adjacents[u].cend(); itr++)
+        const auto& id = adjacent.first;
+        injectData(in_degree, id); // if the id is not in the in_degree list, add it with a zero entry
+        for (const auto& value : adjacent.second)
         {
-			in_degree[*itr]++; 
+            auto degreeIt = std::find_if(in_degree.begin(), in_degree.end(), 
+                    [value](const auto& valuePair)
+                    {
+                        return (value == valuePair.first);
+                    });
+            if(degreeIt != in_degree.end())
+            {
+                degreeIt->second++;
+            }
+            else
+            {
+                in_degree.push_back(std::make_pair(value, 1)); // if we are pushing back, we have one
+            }
         }
 	} 
 
-	// Create an queue and enqueue 
-	// all vertices with indegree 0 
-    std::queue<int> q; 
+    assert(in_degree.size() == m_V);
+
+	// Create an queue and enqueue all vertices with indegree 0 
+    std::queue<int> q;
 	for (int i = 0; i < m_V; ++i)
     {
-		if (in_degree[i] == 0)
+		if (in_degree.at(i).second == 0)
         {
-			q.push(i); 
+			q.push(in_degree.at(i).first); 
         }
     }
-
-	// Initialize count of visited vertices 
-	int cnt = 0; 
 
 	// Create a vector to store result (A topological 
 	// ordering of the vertices) 
@@ -57,25 +107,38 @@ std::vector<int> Graph::topologicalSort()
 	while (!q.empty()) { 
 		// Extract front of queue (or perform dequeue) 
 		// and add it to topological order 
-		int u = q.front(); 
+		int id = q.front(); 
 		q.pop(); 
-		top_order.push_back(u); 
+		top_order.push_back(id); 
+        auto adjacentIt = std::find_if(m_adjacents.cbegin(), m_adjacents.cend(), 
+                [id](const auto& valuePair)
+                {
+                    return (id == valuePair.first);
+                });
 
-		// Iterate through all its neighbouring nodes 
-		// of dequeued node u and decrease their in-degree 
-		// by 1 
-		for (auto itr = m_adjacents[u].begin(); itr != m_adjacents[u].end(); ++itr)
+        if(adjacentIt == m_adjacents.cend())
         {
-
-			// If in-degree becomes zero, add it to queue 
-			if (--in_degree[*itr] == 0) 
-            {
-				q.push(*itr); 
-            }
+            // No edge connecting u to another node is specified
+            continue;
         }
 
-		cnt++; 
+		// Iterate through all its neighbouring nodes of dequeued node id 
+        // and decrease their in-degree by 1 
+		for (const auto& value : adjacentIt->second)
+        {
+            auto degree = std::find_if(in_degree.begin(), in_degree.end(),
+                    [value](const auto& valuePair)
+                    {
+                        return (value == valuePair.first);
+                    });
+
+			// If in-degree becomes zero, add it to queue 
+			if (--degree->second == 0) 
+            {
+				q.push(value); 
+            }
+        }
 	} 
 
     return top_order;
-} 
+}
