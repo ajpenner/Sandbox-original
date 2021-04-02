@@ -5,3 +5,9 @@ g++ -o example  main.cpp
 
 g++ -o example2 main.cpp override.cpp
 ./example2
+
+clang++ -o example3 main.cpp
+./example3
+
+clang++ -o example4 main.cpp override.cpp
+./example4

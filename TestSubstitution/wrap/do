@@ -1,6 +1,12 @@
 #!/bin/sh
-g++ main.cpp RandomMinute.cpp FakeRandomMinute.cpp
-./a.out
+g++ main.cpp RandomMinute.cpp SomeClass.cpp FakeRandomMinute.cpp FakeSomeClassValue.cpp -o example
+./example
 
-g++ -Wl,--wrap=_Z16RandomMinute_Getv main.cpp RandomMinute.cpp FakeRandomMinute.cpp
-./a.out
+g++ -Wl,--wrap=_ZN9SomeClass5ValueEv,--wrap=_Z16RandomMinute_Getv main.cpp RandomMinute.cpp SomeClass.cpp FakeRandomMinute.cpp FakeSomeClassValue.cpp -o example2
+./example2
+
+#clang++-10 -std=libc++ -std=c++17 main.cpp RandomMinute.cpp FakeRandomMinute.cpp -o example3
+#./example3
+
+#clang++-6.0 -std=c++17 -Wl,--wrap=_Z16RandomMinute_Getv main.cpp RandomMinute.cpp FakeRandomMinute.cpp -o example4
+#./example4
