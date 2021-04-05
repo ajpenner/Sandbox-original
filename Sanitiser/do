@@ -1,0 +1,17 @@
+gcc -fopenmp thread_race.c -o race 
+./race
+./race
+./race
+./race
+
+gcc -fsanitize=thread -fopenmp thread_race.c -g -o sanRace 
+./sanRace
+
+gcc -fopenmp thread_no_race.c -o norace 
+./norace
+./norace
+./norace
+./norace
+
+gcc -fsanitize=thread -fopenmp thread_no_race.c -g -o sanNoRace 
+./sanNoRace

@@ -1,0 +1,17 @@
+slow
+strong
+weak
+fast
+main.o
+main.s
+main_simple.o
+main_simple.s
+power.o
+power.s
+power_slow.o
+power_slow.s
+simple_strong.o
+simple_strong.s
+simple_strong_c.o
+simple_weak.o
+simple_weak.s

@@ -1,0 +1,11 @@
+#! /bin/sh
+
+g++ -S main.cpp
+g++ -S power_slow.cpp
+g++ -S power.cpp
+
+g++ -S main_simple.cpp
+g++ -S simple_weak.cpp
+g++ -S simple_strong.cpp
+gcc -S simple_strong.c
+
