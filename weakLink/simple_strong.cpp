@@ -1,4 +1,5 @@
 #include <iostream>
+#include "simple.hpp"
 
 extern Simple::Simple(){}
 extern Simple::~Simple(){}

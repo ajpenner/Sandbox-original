@@ -1755,21 +1755,21 @@ static struct usb_driver qmm_driver = {
  */
 
 static const struct tty_operations acm_ops = {
-	.install =		acm_tty_install,
-	.open =			acm_tty_open,
-	.close =		acm_tty_close,
-	.cleanup =		acm_tty_cleanup,
-	.hangup =		acm_tty_hangup,
-	.write =		acm_tty_write,
+	.install =		    acm_tty_install,
+	.open =			    acm_tty_open,
+	.close =		    acm_tty_close,
+	.cleanup =		    acm_tty_cleanup,
+	.hangup =		    acm_tty_hangup,
+	.write =		    acm_tty_write,
 	.write_room =		acm_tty_write_room,
-	.ioctl =		acm_tty_ioctl,
-	.throttle =		acm_tty_throttle,
+	.ioctl =		    acm_tty_ioctl,
+	.throttle =		    acm_tty_throttle,
 	.unthrottle =		acm_tty_unthrottle,
 	.chars_in_buffer =	acm_tty_chars_in_buffer,
 	.break_ctl =		acm_tty_break_ctl,
 	.set_termios =		acm_tty_set_termios,
-	.tiocmget =		acm_tty_tiocmget,
-	.tiocmset =		acm_tty_tiocmset,
+	.tiocmget =		    acm_tty_tiocmget,
+	.tiocmset =		    acm_tty_tiocmset,
 	.get_icount =		acm_tty_get_icount,
 };
 
