@@ -1,11 +1,40 @@
 #!/bin/sh
-
+# Intensionally separate the object files to simulate linking to an existing library
+# Likely a static library
 g++ -O3 -c donothing.cpp
 g++ -O3 main.cpp donothing.o -o test
 time ./test
 
 rm donothing.o
-
+# Use LTO tjin
 g++ -O3 -flto=thin -c donothing.cpp
 g++ -O3 -flto=thin main.cpp donothing.o -o test2
 time ./test2
+
+rm donothing.o
+# Use LTO full
+g++ -O3 -flto=full -c donothing.cpp
+g++ -O3 -flto=full main.cpp donothing.o -o test3
+time ./test3
+
+rm donothing.o
+# Use normal inline compolation, 
+# This has the information needed to optimise showing the results are the same as with LTO
+# This is not possible if we were linking to a library
+# GCC 7.5 does not optimise away yhe NOOP function, so tje times are similar to test1
+g++ -O3 main.cpp donothing.cpp -o test4
+time ./test4
+
+# Use normal inline compolation with lto 
+# This has the information needed to optimise showing the results are the same as with LTO
+# This is not possible if we were linking to a library
+# GCC 7.5 does not optimise away yhe NOOP function, so tje times are similar to test1
+g++ -O3 -flto=thin main.cpp donothing.cpp -o test5
+time ./test5
+
+# Use normal inline compolation with lto 
+# This has the information needed to optimise showing the results are the same as with LTO
+# This is not possible if we were linking to a library
+# GCC 7.5 does not optimise away yhe NOOP function, so tje times are similar to test1
+g++ -O3 -flto=full main.cpp donothing.cpp -o test6
+time ./test6
