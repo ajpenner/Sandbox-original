@@ -1,0 +1,11 @@
+#!/bin/sh
+
+g++ -O3 -c donothing.cpp
+g++ -O3 main.cpp donothing.o -o test
+time ./test
+
+rm donothing.o
+
+g++ -O3 -flto=thin -c donothing.cpp
+g++ -O3 -flto=thin main.cpp donothing.o -o test2
+time ./test2
