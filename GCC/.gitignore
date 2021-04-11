@@ -3,3 +3,4 @@ main.cpp.*
 main.c.E
 main.s
 main*.png
+main_macro.cpp.*
