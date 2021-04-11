@@ -38,3 +38,12 @@ time ./test5
 # GCC 7.5 does not optimise away yhe NOOP function, so tje times are similar to test1
 g++ -O3 -flto=full main.cpp donothing.cpp -o test6
 time ./test6
+
+# See if it works with cmake
+cmake -S . -B build  -DCMAKE_BUILD_TYPE=Debug
+cmake --build build
+time ./build/cmakeTest
+
+cmake -S . -B build  -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+time ./build/cmakeTest
