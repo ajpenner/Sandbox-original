@@ -1,31 +1,6 @@
 #!/bin/sh
-# Standard compilation to an executable
-g++ main.cpp -o example
-./example
-
-# Output the preprocessor stage for a C++ source
-g++ -E main.cpp > main.cpp.E
-
-# Output the preprocessor stage for a C++ source with macros and defines
-g++ -E main_macro.cpp > main_macro.cpp.E
-
-# Output the preprocessor stage for a C source
-gcc -E main.c > main.c.E
-
-# Output the assembly (ASM)
-g++ -S main.cpp 
-
 # Output GIMPLE tree output
-g++ main.cpp -fdump-tree-gimple -o example2
-
-# Output AST output
-g++ main.cpp -fdump-tree-original -o example2
-
-# Output Control Flow Graph (CFG)output
-g++ main.cpp -fdump-tree-cfg -o example3
-
-# Output IR output
-g++ main.cpp -da -o example4
+g++ main.cpp -fdump-tree-gimple -o example1
 
 # Output RTL
 g++ main.cpp -fdump-rtl-expand -o example5
@@ -34,22 +9,22 @@ g++ main.cpp -fdump-rtl-expand -o example5
 g++ main.cpp -fdump-tree-ssa -o example6
 
 # Output Abstract Syntax Tree (AST) as a graph
-#g++ -fdump-tree-all-graph main.cpp -o example3
+g++ -fdump-tree-all-graph main.cpp -o example7
 
 # Plot them
-#dot -Tpng main.cpp.011t.cfg.dot -o main1.png
-#dot -Tpng main.cpp.012t.ompexp.dot -o main2.png
-#dot -Tpng main.cpp.013t.printf-return-value1.dot -o main3.png
-#dot -Tpng main.cpp.019t.fixup_cfg1.dot -o main4.png
-#main.cpp.020t.ssa.dot
-#main.cpp.027t.fixup_cfg3.dot
-#main.cpp.028t.inline_param1.dot
-#main.cpp.029t.einline.dot
-#main.cpp.049t.release_ssa.dot
-#main.cpp.050t.inline_param2.dot
-#main.cpp.086t.fixup_cfg4.dot
-#main.cpp.218t.veclower.dot
-#main.cpp.219t.cplxlower0.dot
-#main.cpp.225t.resx.dot
-#main.cpp.227t.optimized.dot
+dot -Tpng main.cpp.011t.cfg.dot -o cfg.png
+dot -Tpng main.cpp.012t.ompexp.dot -o ompexp.png
+dot -Tpng main.cpp.013t.printf-return-value1.dot -o retvalue.png
+dot -Tpng main.cpp.019t.fixup_cfg1.dot -o main4.png
 
+dot -Tpng main.cpp.020t.ssa.dot -o SSA.png
+dot -Tpng main.cpp.027t.fixup_cfg3.dot -o main6.png
+dot -Tpng main.cpp.028t.inline_param1.dot -o main7.png
+dot -Tpng main.cpp.029t.einline.dot -o main8.png
+dot -Tpng main.cpp.049t.release_ssa.dot -o main9.png
+dot -Tpng main.cpp.050t.inline_param2.dot -o main1.png
+dot -Tpng main.cpp.086t.fixup_cfg4.dot -o main2.png
+dot -Tpng main.cpp.218t.veclower.dot -o main3.png
+dot -Tpng main.cpp.219t.cplxlower0.dot -o main4.png
+dot -Tpng main.cpp.225t.resx.dot -o main5.png
+dot -Tpng main.cpp.227t.optimized.dot -o optimised.png

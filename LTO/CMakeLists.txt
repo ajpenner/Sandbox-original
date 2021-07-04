@@ -100,3 +100,18 @@ else()
     message(STATUS "IPO / LTO not supported: <${error}>")
 endif()
 
+add_library (
+    noLTO
+  STATIC
+  ${LIBRARY_SOURCES}
+)
+
+add_executable (
+    cmakeTestNoLTO
+  ${MAIN_SOURCES}
+)
+
+target_link_libraries (
+    cmakeTestNoLTO
+    PRIVATE noLTO
+)
