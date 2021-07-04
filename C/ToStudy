@@ -1,0 +1,37 @@
+#pragma pack(arg)
+
+# Keywords
+break
+case
+continue
+default
+enum
+
+for
+goto
+inline (since C99)
+
+signed
+sizeof
+struct
+switch
+typedef
+union
+unsigned
+volatile
+while
+
+# New keywords?
+_Alignas (since C11)
+_Alignof (since C11)
+_Atomic (since C11)
+_Bool (since C99)
+_Complex (since C99)
+_Decimal128 (since C23)
+_Decimal32 (since C23)
+_Decimal64 (since C23)
+_Generic (since C11)
+_Imaginary (since C99)
+_Noreturn (since C11)
+_Static_assert (since C11)
+_Thread_local (since C11)

@@ -1,0 +1,8 @@
+#! /bin/sh
+
+#gcc -std=c11 asm.c -o exe
+#gcc -std=c11 storage_class.c -o exe
+#gcc -std=c11 restrict.c -o exe
+gcc -std=c11 const.c -o exe
+
+./exe

@@ -1,0 +1,4 @@
+#! /bin/sh
+
+gcc -std=c11 main.c private_funct.c -o exe
+./exe

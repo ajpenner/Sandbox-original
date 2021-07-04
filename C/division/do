@@ -1,0 +1,27 @@
+echo "Test 1"
+# divide using bitshift, no optimisation
+gcc -S shift1.c -O0
+# divide using arithmetic divide, no optimisation
+gcc -S shift2.c -O0
+diff shift1.s shift2.s
+
+echo "Test 2"
+# divide using bitshift, minimal optimisation
+gcc -S shift1.c -O1
+# divide using arithmetic divide, minimal optimisation
+gcc -S shift2.c -O1
+diff shift1.s shift2.s
+
+echo "Test 3"
+# divide using arithmetic divide
+gcc -S foo.c -O0
+# divive by multiplying by inverse
+gcc -S mul.c -O0
+diff foo.s mul.s
+
+echo "Test 4"
+# multiply using bitshift, minimal optimisation
+gcc -S shift3.c -O0
+# multiply using arithmetic multiply, minimal optimisation
+gcc -S shift4.c -O0
+diff shift3.s shift4.s
