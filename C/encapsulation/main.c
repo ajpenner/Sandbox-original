@@ -1,5 +1,7 @@
 //#include "private_var.h"
 #include "private_funct.h"
+#include "ads1248.h"
+
 #include <stdio.h>
 
 int main()
@@ -17,8 +19,13 @@ int main()
     *home_number_is_here = 1;
     printf("Modified home number: %d\n", *home_number_is_here);
 
-
-
     delete_contact( Tony );
+
+    ads1248_options_t* ads = ads1248_init();
+
+    printf("%d\n", ads->pin_drdy);
+
+    ads1248_destroy(ads);
+
     return 0;
 }
