@@ -1,0 +1,39 @@
+#! /bin/sh
+# compile test program with fuzzing, note the need for specifying the c++ library
+#clang++ -stdlib=libc++ -fsanitize=address,fuzzer test_fuzzer.cc
+# run the exe, populate a corpus in ynd process
+#./a.out
+
+# Second example
+# replaced 8bit-counters with trace-pc-guard as suggested by the compiler
+# It turns out that trace-pc-guard is not available for clang 9.0
+COV_FLAGS=" -fsanitize-coverage=indirect-calls" # trace-pc-guard
+# Get PCRE2, commented out since I ran this once and already have the package, and built it
+#wget https://ftp.pcre.org/pub/pcre/pcre2-10.20.tar.gz
+#tar xf pcre2-10.20.tar.gz
+# Build PCRE2 with AddressSanitizer and coverage; requires autotools.
+(cd pcre2-10.20; ./autogen.sh; CC="clang -fsanitize=address $COV_FLAGS" ./configure --prefix=`pwd`/../inst && make -j && make install)
+
+# Build the fuzzing target function that does something interesting with PCRE2.
+cat << EOF > pcre_fuzzer.cc
+#include <string.h>
+#include <stdint.h>
+#include "pcre2posix.h"
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t *data, size_t size) {
+  if (size < 1) return 0;
+  char *str = new char[size+1];
+  memcpy(str, data, size);
+  str[size] = 0;
+  regex_t preg;
+  if (0 == regcomp(&preg, str, 0)) {
+    regexec(&preg, str, 0, 0, 0);
+    regfree(&preg);
+  }
+  delete [] str;
+  return 0;
+}
+EOF
+# modified yhe clang 3.9.0 tutorial, no longer add the library libfuzzer.a directly
+clang++ -fsanitize=address,fuzzer -stdlib=libc++ $COV_FLAGS -c -std=c++11  -I inst/include/ pcre_fuzzer.cc
+# Link. Note that we specify the stdlib
+clang++ -fsanitize=address,fuzzer -stdlib=libc++ -Wl,--whole-archive inst/lib/*.a -Wl,-no-whole-archive pcre_fuzzer.o -o pcre_fuzzer
