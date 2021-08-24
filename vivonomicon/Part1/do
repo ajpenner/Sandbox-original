@@ -1,0 +1,5 @@
+#!/bin/sh
+# Create the object file from the assembly 
+arm-none-eabi-gcc -x assembler-with-cpp -c -O0 -mcpu=cortex-m4 -mthumb -Wall core.S -o core.o
+# Create the final elf image
+arm-none-eabi-gcc core.o -mcpu=cortex-m4 -mthumb -Wall --specs=nosys.specs -nostdlib -lgcc -T./STM32F303VCT6.ld -o main.elf
