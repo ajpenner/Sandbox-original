@@ -10,7 +10,7 @@ You can use, copy and distribute this file freely, but without any warranty.
 
 /* Memory Spaces Definitions */
 
-ENTRY(Reset_Handler)
+ENTRY(reset_handler)
 
 MEMORY
 {

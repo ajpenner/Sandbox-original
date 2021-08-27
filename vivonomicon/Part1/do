@@ -3,3 +3,26 @@
 arm-none-eabi-gcc -x assembler-with-cpp -c -O0 -mcpu=cortex-m4 -mthumb -Wall core.S -o core.o
 # Create the final elf image
 arm-none-eabi-gcc core.o -mcpu=cortex-m4 -mthumb -Wall --specs=nosys.specs -nostdlib -lgcc -T./STM32F303VCT6.ld -o main.elf
+
+# To connect gdb to the target we need to install stlink tools
+#git clone https://github.com/texane/stlink.git
+#cd stlink
+#make
+#install binaries:
+#sudo cp build/Release/st-* /usr/local/bin
+#install udev rules
+#sudo cp config/udev/rules.d/49-stlinkv* /etc/udev/rules.d/
+#and restart udev
+#sudo udevadm control --reload
+# to connect run
+#st-util # (from a different terminal than where we compile the code and want to run gdb
+#  more options
+#https://fishpepper.de/2016/09/16/openground-part-3-swd-st-link-debugger/
+
+gdb main.elf
+# target extended-remote :4242
+# load
+# continue
+# ctrl-C
+# info registers
+# expect to see 0xdeadbeef on register 7
