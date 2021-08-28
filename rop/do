@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# compile to 32bit, it is easier to show how ROP (return oriented programming) works
+ gcc -m32 hello_world.c -o ropExample
+ ./ropExample sampleText
