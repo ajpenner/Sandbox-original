@@ -1,5 +1,108 @@
 #!/bin/sh
-
+# Following: https://codearcana.com/posts/2013/05/28/introduction-to-return-oriented-programming-rop.html
 # compile to 32bit, it is easier to show how ROP (return oriented programming) works
- gcc -m32 hello_world.c -o ropExample
- ./ropExample sampleText
+# this example requires that we explicitly disable the stack protection (disable canaries)
+# we also require -z execstack to disable data execution protection (DEP)
+#-no-pie to disable position independent code (PIE enables ASLR)
+# gcc -fno-stack-protector -z execstack -no-pie -m32 hello_world.c -o ropExample
+# ./ropExample sampleText
+
+#(gdb) disas vulnerable_function
+#Dump of assembler code for function vulnerable_function:
+#   0x080484c2 <+0>:     push   %ebp
+#   0x080484c3 <+1>:amplemov    %esp,%ebp
+#   0x080484c5 <+3>:     push   %ebx
+#   0x080484c6 <+4>:     sub    $0x74,%esp
+#   0x080484c9 <+7>:     call   0x804852b <__x86.get_pc_thunk.ax>
+#   0x080484ce <+12>:    add    $0x1b32,%eax
+#   0x080484d3 <+17>:    sub    $0x8,%esp
+#   0x080484d6 <+20>:    push   0x8(%ebp)
+#   0x080484d9 <+23>:    lea    -0x6c(%ebp),%edx
+#   0x080484dc <+26>:    push   %edx
+#   0x080484dd <+27>:    mov    %eax,%ebx
+#   0x080484df <+29>:    call   0x8048320 <strcpy@plt>
+#   0x080484e4 <+34>:    add    $0x10,%esp
+#   0x080484e7 <+37>:    nop
+#   0x080484e8 <+38>:    mov    -0x4(%ebp),%ebx
+#   0x080484eb <+41>:    leave
+#   0x080484ec <+42>:    ret
+#End of assembler dump.
+#(gdb) print not_called
+#$1 = {<text variable, no debug info>} 0x8048486 <not_called>
+#./ropExample2 "$(python -c 'print "A"*0x6c + "BBBB" + "\x86\x84\x04\x08"')"
+# Expected result:
+#Enjoy your shell!
+
+# Do not disable the stack protector
+# gcc -m32 hello_world.c -o ropExample2
+# ./ropExample2 sampleText
+
+
+ # gdb -q ropExample
+ # (gdb) disas vulnerable_functio
+ # Dump of assembler code for function vulnerable_function:
+ #  0x00000619 <+0>:     push   %ebp
+ #  0x0000061a <+1>:     mov    %esp,%ebp                                          2,106         All
+ #  0x0000061c <+3>:     push   %ebx
+ #  0x0000061d <+4>:     sub    $0x84,%esp
+ #  0x00000623 <+10>:    call   0x6a8 <__x86.get_pc_thunk.ax>
+ #  0x00000628 <+15>:    add    $0x19a4,%eax
+ #  0x0000062d <+20>:    mov    0x8(%ebp),%edx
+ #  0x00000630 <+23>:    mov    %edx,-0x7c(%ebp)
+ #  0x00000633 <+26>:    mov    %gs:0x14,%ecx
+ #  0x0000063a <+33>:    mov    %ecx,-0xc(%ebp)
+ #  0x0000063d <+36>:    xor    %ecx,%ecx
+ #  0x0000063f <+38>:    sub    $0x8,%esp
+ #  0x00000642 <+41>:    push   -0x7c(%ebp)
+ #  0x00000645 <+44>:    lea    -0x70(%ebp),%edx
+ #  0x00000648 <+47>:    push   %edx
+ #  0x00000649 <+48>:    mov    %eax,%ebx
+ #  0x0000064b <+50>:    call   0x450 <strcpy@plt>
+ #  0x00000650 <+55>:    add    $0x10,%esp
+ #  0x00000653 <+58>:    nop
+ #  0x00000654 <+59>:    mov    -0xc(%ebp),%eax
+ #  0x00000657 <+62>:    xor    %gs:0x14,%eax
+ #  0x0000065e <+69>:    je     0x665 <vulnerable_function+76>
+ #  0x00000660 <+71>:    call   0x720 <__stack_chk_fail_local>
+ #  0x00000665 <+76>:    mov    -0x4(%ebp),%ebx
+ #  0x00000668 <+79>:    leave
+ #  0x00000669 <+80>:    ret
+ # End of assembler dump.
+ # (gdb) print not_called
+ # $1 = {<text variable, no debug info>} 0x5dd <not_called>
+ # (gdb) 
+ #
+ # Address of not_called is 0x5dd, 
+ # Because of the stack protection, ASLR and tbe canaries, we cannot abuse the buffer overflow
+
+#now try a different means to abuse the buffer overflow
+gcc -fno-stack-protector -z execstack -no-pie -m32 notUsed.c -o ropExample3
+./ropExample3 sampleText
+
+#(gdb) disas vulnerable_function
+#Dump of assembler code for function vulnerable_function:
+#   0x080484c2 <+0>:     push   %ebp
+#   0x080484c3 <+1>:     mov    %esp,%ebp
+#   0x080484c5 <+3>:     push   %ebx
+#   0x080484c6 <+4>:     sub    $0x74,%esp
+#   0x080484c9 <+7>:     call   0x804852b <__x86.get_pc_thunk.ax>
+#   0x080484ce <+12>:    add    $0x1b32,%eax
+#   0x080484d3 <+17>:    sub    $0x8,%esp
+#   0x080484d6 <+20>:    push   0x8(%ebp)
+#   0x080484d9 <+23>:    lea    -0x6c(%ebp),%edx
+#   0x080484dc <+26>:    push   %edx
+#   0x080484dd <+27>:    mov    %eax,%ebx
+#   0x080484df <+29>:    call   0x8048320 <strcpy@plt>
+#   0x080484e4 <+34>:    add    $0x10,%esp
+#   0x080484e7 <+37>:    nop
+#   0x080484e8 <+38>:    mov    -0x4(%ebp),%ebx
+#   0x080484eb <+41>:    leave
+#   0x080484ec <+42>:    ret
+#End of assembler dump.
+#(gdb) print 'system@plt'
+#$1 = {<text variable, no debug info>} 0x8048340 <system@plt>
+#(gdb) x/s (char*)not_used
+#0x80485b0:      "/bin/sh"
+#(gdb) print &not_used
+#$1 = (<data variable, no debug info> *) 0x804a024 <not_used>
+./ropExample3  "$(python -c 'print "A"*0x6c + "BBBB" + "\x40\x83\x04\x08" + "CCCC" + "\xb0\x85\x04\x08"')"
