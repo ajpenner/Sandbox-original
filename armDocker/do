@@ -1,0 +1,23 @@
+# Following https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux
+#!/bin/sh
+# Install buildx
+#export DOCKER_BUILDKIT=1
+#docker build --platform=local -o . git://github.com/docker/buildx
+#mkdir -p ~/.docker/cli-plugins
+#mv buildx ~/.docker/cli-plugins/docker-buildx
+# Verify the installation
+#docker buildx --help
+#  this should display things
+#docker buildx version
+
+# Install the qemu instruction emulation to register Arm executables to run on the x86 machine.
+docker run --rm --privileged docker/binfmt:820fdd95a9972a5308930a2bdfb8573dd4447ad3
+
+# Verify the emulator works
+cat /proc/sys/fs/binfmt_misc/qemu-aarch64
+# Should see something like:
+#enabled
+#interpreter /usr/bin/qemu-aarch64
+#flags: OCF
+#offset 0
+#magic 7f454c460201010000000000000000000200b7

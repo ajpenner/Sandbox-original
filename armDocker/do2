@@ -1,0 +1,10 @@
+#!/bin/sh
+# may need to log into dockerhub first
+# docker login -u  ajpenner 
+# Create three images, one for armv7, one for aarch64, and one for AMD
+# push all three to my dockerhub repo
+#docker buildx build --platform linux/arm,linux/arm64,linux/amd64 -t ajpenner/myfirstrepo:hello . --push
+# Show the three images with their SHA identifier
+#docker buildx imagetools inspect ajpenner/myfirstrepo:hello
+# Run the sample code to show the container is emulating the right architecture
+docker run docker.io/ajpenner/myfirstrepo:hello@sha256:b0ecda695ac70bcce4c9002ae3393eb30f044bc44e39583508b79cb5acbad18a
