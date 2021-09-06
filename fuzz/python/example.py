@@ -7,14 +7,20 @@ with atheris.instrument_imports():
 
 @atheris.instrument_func
 def TestOneInput(data):
-    print("Data", data)
-    if len(data) < 1:
+    print("Data:", data)
+    if len(data) < 10:
         return
+
+    if data == "abc":
+        raise RuntimeError("Badness!")
+
     fdp = atheris.FuzzedDataProvider(data)
     value = fdp.ConsumeUInt(1)
-    print("Berp", value)
-    if value > 30:
-        raise RuntimeError("Badness2!")
+    value2 = fdp.ConsumeUnicodeNoSurrogates(2)
+    print("UInt:", value)
+    print("String: ", value2)
+    if value2 == "ac":
+        raise RuntimeError("Caught Unicode String!")
     elif value > 3:
         print("Middle")
     elif value < 3:
