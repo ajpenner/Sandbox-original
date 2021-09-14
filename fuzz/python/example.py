@@ -7,8 +7,7 @@ with atheris.instrument_imports():
 
 @atheris.instrument_func
 def TestOneInput(data):
-    print("Data:", data)
-    if len(data) < 10:
+    if len(data) < 3:
         return
 
     if data == "abc":
@@ -17,14 +16,11 @@ def TestOneInput(data):
     fdp = atheris.FuzzedDataProvider(data)
     value = fdp.ConsumeUInt(1)
     value2 = fdp.ConsumeUnicodeNoSurrogates(2)
-    print("UInt:", value)
-    print("String: ", value2)
+
     if value2 == "ac":
         raise RuntimeError("Caught Unicode String!")
-    elif value > 3:
-        print("Middle")
-    elif value < 3:
-        print("Bottom")
+    if value == 314:
+        raise RuntimeError("Caught Specific UInt!")
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)
