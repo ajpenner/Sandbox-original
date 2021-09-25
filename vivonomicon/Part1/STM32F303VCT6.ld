@@ -14,10 +14,10 @@ ENTRY(reset_handler)
 
 MEMORY
 {
-  FLASH (rx) : ORIGIN = 0x08000000, LENGTH = 256K
-  RAM  (xrw) : ORIGIN = 0x20000000, LENGTH = 32K
+  FLASH (rx)     : ORIGIN = 0x8000000, LENGTH = 256K
+  RAM (xrw)      : ORIGIN = 0x20000000, LENGTH = 40K
 }
 
 /* highest address of the user mode stack */
 /* this is essentially 0x20000000 + 32K */
-_estack = 0x20008000;
+_estack = 0x2000A000;    /* end of RAM */

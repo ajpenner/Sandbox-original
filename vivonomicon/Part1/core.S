@@ -3,7 +3,7 @@
 // the assembly language we'll use:
 .syntax unified
 .cpu cortex-m4
-.fpu softvfp // STM32F303VC has a HW fpu
+.fpu fpv4-sp-d16
 .thumb
 
 // Global memory locations.
